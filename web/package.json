@@ -1,0 +1,32 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@ant-design/charts": "^2.2.7",
+    "@ant-design/icons": "^5.6.1",
+    "@ant-design/nextjs-registry": "^1.0.2",
+    "@noble/hashes": "^1.7.1",
+    "antd": "^5.24.3",
+    "antd-img-crop": "^4.24.0",
+    "next": "14.2.24",
+    "react": "^18",
+    "react-dom": "^18",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "compression-webpack-plugin": "^11.1.0",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.24",
+    "typescript": "^5"
+  }
+}

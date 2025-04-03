@@ -1,0 +1,5 @@
+# production
+/build
+
+# programs
+cmd/*/main
