@@ -48,29 +48,39 @@
 
 ## ⚡ 快速开始
 
-### 1. 克隆仓库
+### 克隆仓库
 
 ```bash
 git clone https://github.com/fenggwsx/PixCluster.git && cd PixCluster
 ```
 
-### 2. 启动前端开发服务器
+### 前端开发
+
+#### 安装项目依赖
+
+```bash
+pnpm --prefix web install
+pnpm --prefix proxy install
+```
+
+#### 启动开发服务器
 
 ```bash
 pnpm --prefix web dev
 ```
 
-### 3. 配置代理服务器
+#### 配置代理服务器
 
 > [!NOTE]
-> 代理服务器用于解决开发环境下的跨域问题
+> 代理服务器用于解决开发环境下的跨域问题。
 
 1. 复制环境模板文件：
 
 ```bash
-cp proxy/.env.example proxy/.env
+cp proxy/.env.example proxy/.env.local
 ```
-2. 编辑`proxy/.env`文件，配置实际的后端地址：
+
+2. 编辑`proxy/.env.local`文件，配置实际的前后端地址：
 
 ```env
 # Frontend
@@ -80,21 +90,80 @@ FRONTEND_URL=http://localhost:3000
 BACKEND_URL=https://example.com
 ```
 
-### 4. 启动代理服务器
+> [!NOTE]
+> 后端暂不支持本地调试，需将后端服务部署后在前端中进行调试。
 
-前台运行模式：
+3. 启动代理服务器：
 ```bash
 pnpm --prefix proxy start
 ```
 
-后台运行模式：
+> [!TIP]
+> 若需经常使用代理服务器，可以将代理服务器置于后台进程中。
+
+#### 访问应用
+
+打开浏览器访问：[http://localhost:9000](http://localhost:9000)
+
+### 项目构建
+
+本项目基于阿里云函数计算，需将代码编译并部署至函数计算平台。
+
+> [!NOTE]
+> 函数计算（Function Compute）是一个事件驱动的全托管 Serverless 计算服务。
+
+#### 服务概览
+
+| 服务名称     | 功能描述     | 入口函数代码文件路径     |
+| ------------ | ------------ | ------------------------ |
+| `web`        | 前端界面     | `web/app/layout.tsx`     |
+| `text2image` | 文生图服务   | `cmd/text2image/main.go` |
+| `kmeans`     | 像素聚类分析 | `cmd/kmeans/main.go`     |
+| `summarize`  | 文本智能总结 | `cmd/summarize/main.go`  |
+
+#### 编译单个服务
+
+执行以下命令编译指定服务（如`kmeans`）：
+
 ```bash
-pnpm --prefix proxy start &
+make build-kmeans
 ```
 
-> [!TIP]
-> 可使用`jobs`命令查看后台进程，使用`kill <pid>`命令关闭指定后台进程
+- 输出文件：`build/kmeans.zip`
+- 其他服务替换命令中的服务名，如`build-text2image`
 
-### 5. 访问应用
+#### 编译所有后端服务
 
-打开浏览器访问[http://localhost:9000](http://localhost:9000)
+执行以下命令编译所有后端服务：
+
+```bash
+make build-apps
+```
+
+- 输出文件：`build`目录下生成`text2image.zip`, `kmeans.zip`, `summarize.zip`
+
+#### 编译所有服务
+
+执行以下命令编译所有服务：
+
+```bash
+make
+```
+
+- 输出文件：`build`目录下生成`web.zip`, `text2image.zip`, `kmeans.zip`, `summarize.zip`
+
+### 项目部署
+
+在阿里云函数计算平台新建函数，进行相应的配置，最后上传生成的`zip`压缩包即可完成部署。
+
+#### 前端配置
+
+对于前端服务，需创建Web函数，并添加自定义层Nginx，启动命令如下：
+
+```bash
+/opt/bin/nginx -c /code/nginx.conf -g 'daemon off;'
+```
+
+#### 后端配置
+
+对于后端服务，需创建事件函数，运行时为Golang，并分配合适的CPU和内存。
