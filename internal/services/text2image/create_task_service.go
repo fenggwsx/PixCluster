@@ -14,14 +14,14 @@ type ImageSynthesisRequestBody struct {
 	Model string `json:"model"`
 	Input struct {
 		Prompt         string  `json:"prompt"`
-		NegativePrompt *string `json:"negative_prompt"`
+		NegativePrompt string `json:"negative_prompt,omitempty"`
 	} `json:"input"`
 	Parameters struct {
-		Size         *string `json:"size"`
-		N            *int    `json:"n"`
-		Seed         *int    `json:"seed"`
-		PromptExtend *bool   `json:"prompt_extend"`
-		Watermark    *bool   `json:"watermark"`
+		Size         *string `json:"size,omitempty"`
+		N            *int    `json:"n,omitempty"`
+		Seed         *int    `json:"seed,omitempty"`
+		PromptExtend *bool   `json:"prompt_extend,omitempty"`
+		Watermark    *bool   `json:"watermark,omitempty"`
 	} `json:"parameters"`
 }
 
@@ -39,7 +39,7 @@ type ImageSynthesisFailResponseBody struct {
 	RequestID string `json:"request_id"`
 }
 
-func CreateTaskService(positivePrompt string, negativePrompt *string) string {
+func CreateTaskService(positivePrompt string, negativePrompt string) string {
 	targetUrl := "https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis"
 	pictureCount := 1
 	pictureSize := os.Getenv("PICTURE_SIZE")

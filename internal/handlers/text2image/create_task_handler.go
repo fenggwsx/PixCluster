@@ -34,7 +34,7 @@ func CreateTaskHandler(ctx context.Context, event *events.HTTPTriggerEvent, para
 	}
 
 	resBody := CreateTaskResponseBody{
-		TaskID: text2image.CreateTaskService(reqBody.Positive, &reqBody.Negative),
+		TaskID: text2image.CreateTaskService(reqBody.Positive, reqBody.Negative),
 	}
 
 	return resp.NewResponse(resp.ResponseBody{
